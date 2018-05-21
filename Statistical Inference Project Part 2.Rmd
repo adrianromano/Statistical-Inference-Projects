@@ -1,0 +1,67 @@
+---
+title: "Statistical Inference Project Part 2"
+author: "Adrian R Angkawijaya"
+date: "5/20/2018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+**Overview**
+
+This project is part 2 of the Statistical Inference course project by Coursera. The goal of this project is to do an exploratory and basic inferential data analysis. The dataset for this project is the ToothGrowth dataset in R.
+
+**Load and Read the data**
+```{r}
+library(datasets)
+data("ToothGrowth")
+head(ToothGrowth)
+```
+
+**Summary of the data**
+```{r}
+str(ToothGrowth)
+summary(ToothGrowth)
+```
+* The ToothGrowth data set has 60 observations with 3 variables.
+* The first variable, len, is a continuous variable and represents the length of tooth.
+* The second variable, supp, is supplements consisting of two levels: VC and OJ.
+* The third variable, dose, is dosage consisting of three levels: 0.5, 1.0, 2.0.
+
+**Exploratory data analysis**
+```{r}
+library(ggplot2)
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+ggplot(ToothGrowth, aes(x = supp, y = len)) +
+    geom_boxplot(aes(fill = supp)) 
+
+ggplot(ToothGrowth, aes(x = dose, y = len, fill = supp)) +
+    geom_bar(stat = "identity") +
+    facet_grid(. ~ supp)
+
+ggplot(ToothGrowth, aes(x = supp, y = len)) +
+    geom_boxplot(aes(fill = supp)) +
+    facet_wrap(~dose)
+```
+
+* From the plots, we can see that an increase of dosage level correspods to an increase in tooth length.
+* For supplements, orange juice contributes to longer teeth length at lower dosage levels.
+* Both Vitamin C and orange juice supplements have the same effect on tooth length on 2.0 dosage level.
+
+**Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose**
+```{r}
+t.test(len ~ supp, data = ToothGrowth)
+t.test(len ~ supp, ToothGrowth[ToothGrowth$dose == 0.5, ])
+t.test(len ~ supp, ToothGrowth[ToothGrowth$dose == 1.0, ])
+t.test(len ~ supp, ToothGrowth[ToothGrowth$dose == 2.0, ])
+```
+**Conclusions**
+
+Since the p-values for dose 0.5 and 1.0 is very small, we reject the null hypotehsis and conclude that there is a significant correlation between the dose levels and tooth length. However, the p-value for dose 2.0 is too large so we fail to reject the null hypothesis and conclude that dose 2.0 does not have a significant effect on tooth length.
+Finally, the p-value for supplements is too large as well so we also conclude that supplements do not have a significant effect in tooth length.
+
+**Assumptions**
+
+1. The population of the guinea pigs were choosen randomly to different dose levels and supplement types.
+2. The population are independent.
+3. The variances between populations are different.
