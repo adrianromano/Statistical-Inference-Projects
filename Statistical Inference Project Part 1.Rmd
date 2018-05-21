@@ -1,0 +1,64 @@
+---
+title: "Statistical Inference Project Part 1"
+author: "Adrian R Angkawijaya"
+date: "5/20/2018"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+**Overview**
+
+This is part 1 of the Statistical Inference Course Project by Coursera. The goal of this project is to use simulations to explore the properties of exponential distribution and compare it with the Central Limit Theorem. We will find the sample mean and variance of the 40 samples and compare them with the theoretical mean and variance. According to the Central Limit Theorem, the sample mean and variance should closely represents each theoretical counterparts as the number of simulation increases.
+
+**Simulations**
+
+Here we run 40 exponential distribution samples in 1000 simulations. We set the seed of the data so that the data can be reproduced. the lambda and simulations are set to be 0.2 and 1000 respectively and n is the number of samples in each simulation.
+```{r}
+set.seed(2018)
+lambda <- 0.2
+n <- 40
+simulations <- 1000
+
+expSimulation <- replicate(simulations, rexp(n,lambda))
+simulationMeans <- apply(expSimulation, 2, mean)
+```
+
+**1. Show the sample mean and compare it to the theoretical mean of the distribution.**
+```{r}
+sampleMean <- mean(simulationMeans)
+sampleMean
+theoreticalMean <- 1/lambda
+theoreticalMean
+```
+* Sample mean is 5.020107 
+* Theoretical mean is 5
+
+```{r}
+hist(simulationMeans, main = "Theoretical vs sample mean", col = "azure", breaks = 20, xlab = "Means")
+abline(v = sampleMean, lwd = 2, col = "red")
+abline(v= theoreticalMean, lwd = 2, col = "purple")
+text(6.5,110, paste("Sample mean = ", round(sampleMean, 2)), col = "red")
+text(6.5, 95, paste("Theoretical mean = ", theoreticalMean), col = "purple")
+```
+
+**2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.**
+```{r}
+sampleVar <-var(simulationMeans)
+sampleVar
+theoreticalVar <- (1/lambda)^2/n
+theoreticalVar
+```
+* Sample Variance is 0.6261326
+* Theoretical Variance is 0.625
+* The variability of the averages of 40 exponentilas is close to the theoretical variance of the distribution.
+
+**3. Show that the distribution is approximately normal.**
+```{r}
+qqnorm(simulationMeans)
+qqline(simulationMeans, col = "red")
+```
+
+* We can see here that the exponential distribution is approximately normal. The averages of the sample should follow a normal distribution by the Cental Limit Theorem.
